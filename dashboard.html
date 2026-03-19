@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  background: #eef2f7;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  background: linear-gradient(180deg, #0f172a, #1e293b);
+  color: white;
+  height: 100vh;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  font-weight: 600;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  padding: 30px;
+}
+
+/* CARD */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+/* INPUT */
+input, select {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* BUTTON */
+button {
+  padding: 10px 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.add-btn {
+  background: #16a34a;
+  color: white;
+}
+
+.add-btn:hover {
+  background: #15803d;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+.edit-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #1d4ed8;
+}
+
+/* STATUS */
+.status-success {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.status-belum {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  padding: 12px;
+  background: #0f172a;
+  color: white;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+tr:hover {
+  background: #f9fafb;
+}
+</style>
+
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>Dashboard</h2>
+  <p>Admin Panel</p>
+</div>
+
+<div class="main">
+
+  <div class="card">
+    <h3>Tambah Data</h3>
+
+    <input type="text" id="nomor" placeholder="Nomor Terpilih">
+    <input type="number" id="saldo" placeholder="Claim Saldo">
+    
+    <select id="tipe">
+      <option value="VIP">VIP</option>
+      <option value="Member">Member</option>
+    </select>
+
+    <select id="status">
+      <option value="Belum Klaim">Belum Klaim</option>
+      <option value="Success">Success</option>
+    </select>
+
+    <button class="add-btn" onclick="tambahData()">Tambah</button>
+  </div>
+
+  <div class="card">
+    <h3>Data Claim</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nomor</th>
+          <th>Saldo</th>
+          <th>Tipe</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="dataTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+// format rupiah
+function formatRupiah(angka) {
+  return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function tambahData() {
+  let nomor = document.getElementById("nomor").value;
+  let saldo = document.getElementById("saldo").value;
+  let tipe = document.getElementById("tipe").value;
+  let status = document.getElementById("status").value;
+
+  if(nomor === "" || saldo === "") {
+    alert("Isi semua data!");
+    return;
+  }
+
+  let table = document.getElementById("dataTable");
+  let row = table.insertRow();
+
+  row.innerHTML = `
+    <td>${nomor}</td>
+    <td>Rp ${formatRupiah(saldo)}</td>
+    <td>${tipe}</td>
+    <td class="${status === 'Success' ? 'status-success' : 'status-belum'}">
+      ${status}
+    </td>
+    <td>
+      <button class="edit-btn" onclick="ubahStatus(this)">Ubah</button>
+      <button class="delete-btn" onclick="hapusData(this)">Hapus</button>
+    </td>
+  `;
+
+  document.getElementById("nomor").value = "";
+  document.getElementById("saldo").value = "";
+}
+
+function hapusData(btn) {
+  btn.closest("tr").remove();
+}
+
+function ubahStatus(btn) {
+  let statusCell = btn.closest("tr").children[3];
+
+  if (statusCell.innerText === "Belum Klaim") {
+    statusCell.innerText = "Success";
+    statusCell.className = "status-success";
+  } else {
+    statusCell.innerText = "Belum Klaim";
+    statusCell.className = "status-belum";
+  }
+}
+</script>
+
+</body>
+</html>
